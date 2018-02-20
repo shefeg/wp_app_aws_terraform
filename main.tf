@@ -10,7 +10,7 @@ resource "aws_instance" "wp_app" {
   subnet_id                   = "${aws_subnet.wp_public_subnet_1.id}"
   associate_public_ip_address = true
   vpc_security_group_ids      = ["${aws_security_group.wp_instance.id}"]
-  key_name                    = "aipk"  
+  key_name                    = "aipk"
 
   tags {
     Name = "wp-app"
@@ -24,7 +24,7 @@ resource "aws_db_instance" "db_wp" {
   engine                 = "mysql"
   engine_version         = "5.6.37"
   instance_class         = "db.t2.micro"
-  identifier             = "${var.rds_instance_name}" 
+  identifier             = "${var.rds_instance_name}"
   name                   = "${var.rds_db_name}"
   username               = "${var.rds_user}"
   password               = "${data.aws_ssm_parameter.db_wp_password.value}"
