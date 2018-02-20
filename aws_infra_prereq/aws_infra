@@ -4,5 +4,3 @@ USER="terraform"
 
 aws iam create-user --user-name $USER && aws iam create-access-key --user-name $USER && \
 aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --user-name $USER
-
-aws route53 create-reusable-delegation-set --caller-reference 1224 --hosted-zone-id "/hostedzone/Z3TOSCZ79LJUE6"
