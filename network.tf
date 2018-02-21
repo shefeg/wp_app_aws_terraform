@@ -99,7 +99,7 @@ resource "aws_security_group" "wp_instance" {
   vpc_id = "${aws_vpc.wp_vpc.id}"
 }
 
-resource "aws_security_group_rule" "rds_instance" {
+resource "aws_security_group_rule" "rds_instance_3306_inbound" {
   type                     = "ingress"
   from_port                = 3306
   to_port                  = 3306
@@ -108,7 +108,16 @@ resource "aws_security_group_rule" "rds_instance" {
   source_security_group_id = "${aws_security_group.wp_instance.id}"
 }
 
-resource "aws_security_group_rule" "wp_instance_80" {
+resource "aws_security_group_rule" "rds_instance_3306_open" {
+  type                     = "ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = "${aws_security_group.rds_instance.id}"
+  cidr_blocks              = ["194.44.35.131/32"]
+}
+
+resource "aws_security_group_rule" "wp_instance_80_inbound" {
   type              = "ingress"
   from_port         = 80
   to_port           = 80
@@ -117,7 +126,7 @@ resource "aws_security_group_rule" "wp_instance_80" {
   security_group_id = "${aws_security_group.wp_instance.id}"
 }
 
-resource "aws_security_group_rule" "wp_instance_22" {
+resource "aws_security_group_rule" "wp_instance_22_inbound" {
   type              = "ingress"
   from_port         = 22
   to_port           = 22
@@ -125,3 +134,14 @@ resource "aws_security_group_rule" "wp_instance_22" {
   cidr_blocks       = ["194.44.35.131/32"]
   security_group_id = "${aws_security_group.wp_instance.id}"
 }
+
+resource "aws_security_group_rule" "wp_instance_allow_all_outbound" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = "${aws_security_group.wp_instance.id}"
+}
+
+

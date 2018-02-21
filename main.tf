@@ -5,15 +5,19 @@ provider "aws" {
 
 #------ EC2 ------
 resource "aws_instance" "wp_app" {
-  ami                         = "ami-66506c1c"
+  ami                         = "${var.ami}"
+  lifecycle {
+    create_before_destroy     = true
+  }
   instance_type               = "t2.micro"
+  user_data                   = "${data.template_file.user_data.rendered}"
   subnet_id                   = "${aws_subnet.wp_public_subnet_1.id}"
   associate_public_ip_address = true
   vpc_security_group_ids      = ["${aws_security_group.wp_instance.id}"]
   key_name                    = "aipk"
 
   tags {
-    Name = "wp-app"
+    Name = "wp_app"
   }
 }
 
