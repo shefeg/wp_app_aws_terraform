@@ -6,10 +6,18 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install terraform
+          name: Prepare AWS
           command: |
             chmod +x aws_infra.sh
             ./aws_infra.sh
+  deploy:
+    docker:
+      - image: ubuntu:latest
+    steps:
+      - checkout
+      - run:
+          name: Install Terraform
+          command: |
             apt-get update
             apt-get install unzip wget -y
             wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip
@@ -21,3 +29,9 @@ jobs:
           command: |
             terraform init
             terraform apply -auto-approve
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy
