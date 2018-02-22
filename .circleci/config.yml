@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  aws:
     docker:
       - image: cgswong/aws:latest
     steps:
@@ -10,7 +10,7 @@ jobs:
           command: |
             chmod +x aws_infra.sh
             ./aws_infra.sh
-  deploy:
+  terraform:
     docker:
       - image: ubuntu:latest
     steps:
@@ -31,7 +31,9 @@ jobs:
             terraform apply -auto-approve
 workflows:
   version: 2
-  build_and_deploy:
+  aws_and_terraform:
     jobs:
-      - build
-      - deploy
+      - aws
+      - terraform
+        requires:
+          - aws
