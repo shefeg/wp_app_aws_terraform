@@ -19,4 +19,3 @@ jobs:
           command: |
             terraform init
             terraform apply -auto-approve
-            git push
