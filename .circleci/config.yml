@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  aws:
+  build:
     docker:
       - image: mesosphere/aws-cli
     steps:
