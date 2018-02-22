@@ -8,6 +8,7 @@ jobs:
       - run:
           name: Install terraform
           command: |
+            apt-get update
             apt-get install unzip
             wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64
             unzip terraform_0.11.3_linux_amd64
