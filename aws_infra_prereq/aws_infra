@@ -1,6 +1,0 @@
-#!/bin/bash
-
-USER="terraform"
-
-aws iam create-user --user-name $USER && aws iam create-access-key --user-name $USER && \
-aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --user-name $USER
