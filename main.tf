@@ -3,6 +3,21 @@ provider "aws" {
   profile = "${var.profile}"
 }
 
+# terraform state file setup
+# create an S3 bucket to store the state file in
+resource "aws_s3_bucket" "terraform-state-storage-s3-oihn" {
+  bucket = "terraform-remote-state-storage-s3-oihn"
+  versioning {
+    enabled = true
+  }
+  lifecycle {
+    prevent_destroy = true
+  }
+  tags {
+    Name = "S3 Remote Terraform State Store"
+  }      
+}
+
 #------ EC2 ------
 resource "aws_instance" "wp_app" {
   ami                         = "${var.ami}"
