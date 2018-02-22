@@ -10,14 +10,14 @@ jobs:
           command: |
             chmod +x aws_infra.sh
             ./aws_infra.sh
-      #       apt-get update
-      #       apt-get install unzip wget -y
-      #       wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip
-      #       unzip terraform_0.11.3_linux_amd64.zip
-      #       mv terraform /usr/local/bin/
-      #       terraform --version
-      # - run:
-      #     name: Run terraform
-      #     command: |
-      #       terraform init
-      #       terraform apply -auto-approve
+            apt-get update
+            apt-get install unzip wget -y
+            wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip
+            unzip terraform_0.11.3_linux_amd64.zip
+            mv terraform /usr/local/bin/
+            terraform --version
+      - run:
+          name: Run terraform
+          command: |
+            terraform init
+            terraform apply -auto-approve
