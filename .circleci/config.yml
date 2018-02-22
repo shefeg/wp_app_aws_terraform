@@ -2,12 +2,17 @@ version: 2
 jobs:
   build:
     docker:
-      - image: debian:stretch
+      - image: ubuntu:latest
     steps:
       - checkout
       - run:
-          name: Greeting
-          command: echo Hello, world.
+          name: Install terraform
+          command: |
+            sudo apt-get install unzip
+            wget https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64
+            unzip terraform_0.11.3_linux_amd64
+            sudo mv terraform /usr/local/bin/
+            terraform --version
       - run:
-          name: Print the Current Time
-          command: date
+          name: Run terraform
+          command: terraform apply

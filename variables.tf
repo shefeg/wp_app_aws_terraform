@@ -1,5 +1,5 @@
 variable "profile" {
-  default = "terraform"
+  default = "default"
 }
 
 variable "region" {
