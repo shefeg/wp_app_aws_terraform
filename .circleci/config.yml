@@ -32,10 +32,10 @@ jobs:
             terraform init
             terraform apply -auto-approve
 
-            
+
 workflows:
   version: 2
-  deploy:
+  build_and_deploy:
     jobs:
       - build
       - deploy
