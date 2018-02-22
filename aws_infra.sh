@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 USER="terraform"
 REGION="us-east-1"

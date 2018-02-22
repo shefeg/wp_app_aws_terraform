@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: mesosphere/aws-cli
+      - image: fstab/aws-cli
     steps:
       - checkout
       - run:
