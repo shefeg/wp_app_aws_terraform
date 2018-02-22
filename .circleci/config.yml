@@ -16,4 +16,6 @@ jobs:
             terraform --version
       - run:
           name: Run terraform
-          command: terraform apply
+          command: |
+            terraform init
+            terraform apply -auto-approve
