@@ -2,4 +2,3 @@
 /.terraform
 /.vscode
 .terraform.tfstate.lock.info
-s3_state/.terraform
