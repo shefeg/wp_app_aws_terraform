@@ -1,5 +1,5 @@
 output "rds_endpoint" {
-  value = "${aws_db_instance.db_wp.address}"
+  value = "${aws_db_instance.db-wp.address}"
 }
 
 output "ec2_endpoint" {
