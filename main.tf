@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 #------ EC2 ------
-resource "aws_instance" "wp_app" {
+resource "aws_instance" "wp-app" {
   ami                         = "${var.ami}"
   lifecycle {
     create_before_destroy     = true
@@ -22,7 +22,7 @@ resource "aws_instance" "wp_app" {
 }
 
 #------ RDS ------
-resource "aws_db_instance" "db_wp" {
+resource "aws_db_instance" "db-wp" {
   allocated_storage      = 20
   storage_type           = "gp2"
   engine                 = "mysql"
