@@ -57,9 +57,12 @@ workflows:
   version: 2
   remote_state-and-terraform:
     jobs:
-      # - remote_state
-      # - terraform:
-      #     requires:
-      #       - remote_state
+      - remote_state
+      - terraform:
+          requires:
+            - remote_state
       - chef
+          requires:
+            - remote_state
+            - terraform
             

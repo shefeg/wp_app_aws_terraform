@@ -131,7 +131,7 @@ resource "aws_security_group_rule" "wp_instance_22_inbound" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = ["194.44.35.131/32"]
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.wp_instance.id}"
 }
 
