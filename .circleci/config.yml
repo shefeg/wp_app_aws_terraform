@@ -46,7 +46,7 @@ jobs:
             source env.txt
             export $(cut -d= -f1 env.txt)
             HOST="$(aws ec2 describe-instances --filters "Name=tag-value,Values=$TAG" "Name=instance-state-name,Values=running" \
-            --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d'\n[]\", ')"
+            --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d '\n[]", ')"
             while ! ssh -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
             ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'sudo echo 1'
 
