@@ -49,7 +49,9 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d '\n[]", ')"
             echo "EC2 host - $HOST"
             while ! ssh -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
-            ssh -o StrictHostKeyChecking=no -t -t ubuntu@$HOST 'bash -s' < ./chef_commands.sh
+            scp chef_commands.sh ubuntu@$HOST:~/
+            ssh -t -t ubuntu@$HOST 'nohup chef_commands.sh >> /tmp/log_file 2>&1 </dev/null &'
+            # ssh -o StrictHostKeyChecking=no -t -t ubuntu@$HOST 'bash -s' < ./chef_commands.sh
             # nohup chef_commands.sh >> /tmp/log_file 2>&1 | ssh -o StrictHostKeyChecking=no -t -t ubuntu@$HOST "bash "
             # ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'cd chef-repo; NODE="$(sudo knife node list -z 2>&1 | tail -1)"; sudo knife node run_list add $NODE wp-app::default -z; sudo chef-client -z'
 
