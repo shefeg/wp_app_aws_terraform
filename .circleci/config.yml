@@ -33,6 +33,6 @@ jobs:
             echo "EC2 host - $EC2_HOST"
             echo "Wait for 3 minutes until Chef is configured on the instance" && sleep 180
             while ! scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~; do echo "SCP failed, retrying..." && sleep 5; done;
-            ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'sudo ./chef_commands.sh'
+            ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'chmod 755 chef_commands.sh && ./chef_commands.sh'
 
 # scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~
