@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # DESCRIPTION:
 # Script to create S3 bucket and Dynamo DB table for terraform remote state storage
