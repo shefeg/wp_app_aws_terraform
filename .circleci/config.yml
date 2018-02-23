@@ -61,7 +61,7 @@ workflows:
       - terraform:
           requires:
             - remote_state
-      - chef
+      - chef:
           requires:
             - remote_state
             - terraform
