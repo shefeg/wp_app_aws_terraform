@@ -34,6 +34,7 @@ jobs:
           command: |
             terraform init
             terraform apply -auto-approve
+
   chef:
     docker:
       - image: cgswong/aws:latest
@@ -60,5 +61,5 @@ workflows:
       # - terraform:
       #     requires:
       #       - remote_state
-        - chef
+      - chef
             
