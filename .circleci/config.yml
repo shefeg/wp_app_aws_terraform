@@ -40,7 +40,7 @@ jobs:
       steps:
         - checkout
         - run:
-            name: Terraform S3 remote state
+            name: Chef deployment
             command: |
             source env.txt
             export $(cut -d= -f1 env.txt)
@@ -56,8 +56,9 @@ workflows:
   version: 2
   remote_state-and-terraform:
     jobs:
-      - remote_state
-      - terraform:
-          requires:
-            - remote_state
+      # - remote_state
+      # - terraform:
+      #     requires:
+      #       - remote_state
+        - chef
             
