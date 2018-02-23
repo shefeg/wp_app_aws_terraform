@@ -40,7 +40,7 @@ variable "rds_user" {
   default = "vasya"
 }
 
-data "aws_ssm_parameter" "db_wp_password" {
+data "aws_ssm_parameter" "db-wp_password" {
   name = "db_wp_password"
 }
 

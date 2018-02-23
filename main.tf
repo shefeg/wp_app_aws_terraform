@@ -31,7 +31,7 @@ resource "aws_db_instance" "db-wp" {
   identifier             = "db-wp"
   name                   = "${var.rds_db_name}"
   username               = "${var.rds_user}"
-  password               = "${data.aws_ssm_parameter.db_wp_password.value}"
+  password               = "${data.aws_ssm_parameter.db-wp_password.value}"
   publicly_accessible    = true
   db_subnet_group_name   = "${aws_db_subnet_group.db_wp_subnet_group.id}"
   vpc_security_group_ids = ["${aws_security_group.rds_instance.id}"]
