@@ -25,7 +25,7 @@ variable "ami" {
 }
 
 variable "ec2_instance_name" {
-  default = "wp_app"
+  default = "wp-app"
 }
 
 variable "rds_instance_name" {

@@ -1,1 +1,1 @@
-# wp_app_aws_terraform
+# wp-app_aws_terraform

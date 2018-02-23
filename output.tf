@@ -3,6 +3,6 @@ output "rds_endpoint" {
 }
 
 output "ec2_endpoint" {
-  value = "${aws_instance.wp_app.public_ip}"
+  value = "${aws_instance.wp-app.public_ip}"
 }
 
