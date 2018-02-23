@@ -2,16 +2,16 @@ version: 2
 
 
 jobs:
-  aws:
+  remote_state:
     docker:
       - image: cgswong/aws:latest
     steps:
       - checkout
       - run:
-          name: Prepare AWS
+          name: Terraform S3 remote state
           command: |
-            chmod +x aws_infra.sh
-            ./aws_infra.sh
+            chmod +x .circleci/circleci_init.sh
+            ./.circleci/circleci_init.sh
 
   terraform:
     docker:
@@ -36,9 +36,9 @@ jobs:
 
 workflows:
   version: 2
-  aws_and_terraform:
+  remote_state-and-terraform:
     jobs:
-      - aws
+      - remote_state
       - terraform:
           requires:
-            - aws
+            - remote_state
