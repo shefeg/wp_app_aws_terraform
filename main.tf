@@ -17,7 +17,7 @@ resource "aws_instance" "wp_app" {
   key_name                    = "aipk"
 
   tags {
-    Name = "wp_app"
+    Name = "${var.ec2_instance_name}"
   }
 }
 
@@ -28,7 +28,7 @@ resource "aws_db_instance" "db_wp" {
   engine                 = "mysql"
   engine_version         = "5.6.37"
   instance_class         = "db.t2.micro"
-  identifier             = "${var.rds_instance_name}"
+  identifier             = "db-wp"
   name                   = "${var.rds_db_name}"
   username               = "${var.rds_user}"
   password               = "${data.aws_ssm_parameter.db_wp_password.value}"
@@ -37,6 +37,6 @@ resource "aws_db_instance" "db_wp" {
   vpc_security_group_ids = ["${aws_security_group.rds_instance.id}"]
 
   tags {
-    Name = "db_wp"
+    Name = "${var.rds_instance_name}"
   }
 }

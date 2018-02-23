@@ -4,10 +4,10 @@
 # Script to create S3 bucket and Dynamo DB table for terraform remote state storage
 # Should be run at the start of CircleCI pipeline
 
-# USER="terraform"
 # REGION="us-east-1"
 
-aws s3api create-bucket --bucket terraform-remote-state-storage-s3-oihn --region $REGION
+BUCKET="terraform-remote-state-storage-s3-oihn"
+aws s3api create-bucket --bucket $BUCKET --region $REGION
 [[ "$(aws dynamodb create-table \
          --region $REGION \
          --table-name terraform_locks \

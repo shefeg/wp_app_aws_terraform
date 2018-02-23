@@ -2,20 +2,7 @@ version: 2
 
 
 jobs:
-  remote_state:
-    docker:
-      - image: cgswong/aws:latest
-    steps:
-      - checkout
-      - run:
-          name: Terraform S3 remote state
-          command: |
-            source env.txt
-            export $(cut -d= -f1 env.txt)
-            chmod +x .circleci/circleci_init.sh
-            ./.circleci/circleci_init.sh
-
-  terraform:
+  deploy:
     docker:
       - image: ubuntu:latest
     steps:
@@ -30,51 +17,24 @@ jobs:
             mv terraform /usr/local/bin/
             terraform --version
       - run:
+          name: Set Terraform S3 remote state
+          command: |
+            export EC2_NAME=$(sed -n 's/ec2_instance_name.*\(".*"\)/\1/p' terraform.tfvars | tr -d '"')
+            export REGION=$(sed -n 's/region.*\(".*"\)/\1/p' terraform.tfvars | tr -d '"')
+            chmod 755 .circleci/circleci_init.sh
+            ./.circleci/circleci_init.sh
+      - run:
           name: Run terraform
           command: |
             terraform init
             terraform apply -auto-approve
-
-  chef:
-    docker:
-      - image: cgswong/aws:latest
-    steps:
-      - checkout
+            terraform output rds_endpoint >> environment.txt
+            terraform output ec2_endpoint >> environment.txt
       - run:
           name: Chef deployment
           command: |
-            source env.txt
-            export $(cut -d= -f1 env.txt)
-            HOST="$(aws ec2 describe-instances --filters "Name=tag-value,Values=$TAG" "Name=instance-state-name,Values=running" \
-            --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d '\n[]", ')"
-            echo "EC2 host - $HOST"
-            ls -l
-            chmod +x chef_commands.sh
+            EC2_HOST="$(grep -i "ec2" environment.txt | cut -d' ' -f 3)"
+            echo "EC2 host - $EC2_HOST"
             chmod 755 chef_commands.sh
-            cat chef_commands.sh
-            ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'bash -s' < ./chef_commands.sh
-
-            # while ! ssh -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
-            # ssh -o StrictHostKeyChecking=no ubuntu@$HOST "./chef_commands.sh &>/dev/null &"
-            
-            # ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'bash -s' < ./chef_commands.sh
-
-            # scp chef_commands.sh ubuntu@$HOST:~/
-            # ssh -t -t ubuntu@$HOST 'nohup chef_commands.sh >> /tmp/log_file 2>&1 </dev/null &'
-            # nohup chef_commands.sh >> /tmp/log_file 2>&1 | ssh -o StrictHostKeyChecking=no -t -t ubuntu@$HOST "bash "
-            # ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'cd chef-repo; NODE="$(sudo knife node list -z 2>&1 | tail -1)"; sudo knife node run_list add $NODE wp-app::default -z; sudo chef-client -z'
-
-
-workflows:
-  version: 2
-  remote_state-and-terraform:
-    jobs:
-      # - remote_state
-      # - terraform:
-      #     requires:
-      #       - remote_state
-      - chef
-          # requires:
-          #   - remote_state
-          #   - terraform
-            
+            scp environment.txt ubuntu@$EC2_HOST:~
+            ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'bash -s' < ./chef_commands.sh
