@@ -49,8 +49,9 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d '\n[]", ')"
             echo "EC2 host - $HOST"
             ls -l
-            chmod +x ./chef_command.sh
-            chmod 755 ./chef_command.sh
+            chmod +x chef_commands.sh
+            chmod 755 chef_commands.sh
+            cat chef_commands.sh
             ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'bash -s' < ./chef_commands.sh
 
             # while ! ssh -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
