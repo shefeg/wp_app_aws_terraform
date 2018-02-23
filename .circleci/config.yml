@@ -48,8 +48,9 @@ jobs:
             HOST="$(aws ec2 describe-instances --filters "Name=tag-value,Values=$TAG" "Name=instance-state-name,Values=running" \
             --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d '\n[]", ')"
             echo "EC2 host - $HOST"
-            chmod +x chef_command.sh
-            chmod 755 chef_command.sh
+            ls -l
+            chmod +x ./chef_command.sh
+            chmod 755 ./chef_command.sh
             ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'bash -s' < ./chef_commands.sh
 
             # while ! ssh -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
