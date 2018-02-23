@@ -44,7 +44,8 @@ jobs:
           name: Chef deployment
           command: |
             apt-get update
-            apt-get install -y awscli
+            apt-get install -y awscli openssh-server
+            service ssh restart
             source env.txt
             export $(cut -d= -f1 env.txt)
             HOST="$(aws ec2 describe-instances --filters "Name=tag-value,Values=$TAG" "Name=instance-state-name,Values=running" \
