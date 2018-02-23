@@ -32,5 +32,5 @@ jobs:
             EC2_HOST="$(terraform output ec2_endpoint)"
             echo "EC2 host - $EC2_HOST"
             chmod 755 chef_commands.sh
-            scp -o StrictHostKeyChecking=no rds_endpoint.txt ubuntu@$EC2_HOST:~
-            ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'bash -s' < ./chef_commands.sh
+            scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~
+            ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST './chef_commands.sh'
