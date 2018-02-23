@@ -24,15 +24,12 @@ jobs:
             chmod 755 .circleci/circleci_init.sh
             ./.circleci/circleci_init.sh
       - run:
-          name: Deploy Terraform and CHef
+          name: Terraform and Chef Deployment
           command: |
             terraform init
             terraform apply -auto-approve
             terraform output rds_endpoint > rds_endpoint.txt
             EC2_HOST="$(terraform output ec2_endpoint)"
-      - run:
-          name: Chef deployment
-          command: |
             echo "EC2 host - $EC2_HOST"
             chmod 755 chef_commands.sh
             scp rds_endpoint.txt ubuntu@$EC2_HOST:~
