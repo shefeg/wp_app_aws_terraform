@@ -37,22 +37,18 @@ jobs:
 
   chef:
     docker:
-      - image: ubuntu:latest
+      - image: cgswong/aws:latest
     steps:
       - checkout
       - run:
           name: Chef deployment
           command: |
-            apt-get update
-            apt-get install -y awscli openssh-server
-            service ssh restart
             source env.txt
             export $(cut -d= -f1 env.txt)
             HOST="$(aws ec2 describe-instances --filters "Name=tag-value,Values=$TAG" "Name=instance-state-name,Values=running" \
             --query 'Reservations[*].Instances[*].PublicDnsName' --region $REGION | tr -d '\n[]", ')"
-            echo "EC2 host: $HOST"
-            chmod +x /usr/bin/ssh
-            while ! ssh -vv -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
+            echo "EC2 host - $HOST"
+            while ! ssh -o StrictHostKeyChecking=no ubuntu@$HOST; do echo \"SSH failed, retrying...\" >&2 && sleep 5; done;
             ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'bash -s' < ./chef_commands.sh
             # ssh -o StrictHostKeyChecking=no ubuntu@$HOST 'cd chef-repo; NODE="$(sudo knife node list -z 2>&1 | tail -1)"; sudo knife node run_list add $NODE wp-app::default -z; sudo chef-client -z'
 
