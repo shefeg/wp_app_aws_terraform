@@ -37,7 +37,7 @@ jobs:
           command: |      
             EC2_HOST="$(cat ec2_endpoint.txt)"
             echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
-            while ! scp -o StrictHostKeyChecking=no rds_endpoint.txt ec2_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~; do echo "SSH failed, retrying..." && sleep 5; done;
+            while ! scp -o StrictHostKeyChecking=no rds_endpoint.txt ec2_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~; do echo "SSH failed, retrying..."; sleep 5; done;
             ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'chmod 755 chef_commands.sh && ./chef_commands.sh'
       - run:
           name: Check if WP application is available
