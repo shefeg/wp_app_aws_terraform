@@ -10,7 +10,7 @@ chefdk_install_ubuntu_16 ()
         echo 'eval "$(chef shell-init bash)"' >> ~/.profile && source ~/.profile > /dev/null
         chef verify
     else
-        echo "CHEF DK ALREADY INSTALLED"
+        echo "CHEF DK IS ALREADY INSTALLED"
     fi
 }
 
@@ -18,13 +18,12 @@ chefdk_install_centos_7 ()
 {
     if [[ ! $(sudo rpm -qa | grep chefdk) ]]; then
         CHEF_PACKAGE_URL="https://packages.chef.io/files/stable/chefdk/2.4.17/el/7/chefdk-2.4.17-1.el7.x86_64.rpm"
-        wget -nc $CHEF_PACKAGE_URL
         sudo rpm -Uvh $CHEF_PACKAGE_URL
         [ ! -f ~/.bash_profile ] && sudo touch ~/.bash_profile
-        sudo echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile && source ~/.bash_profile > /dev/null
+        sudo echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile && sudo source ~/.bash_profile > /dev/null
         sudo chef verify
     else
-        echo "CHEF DK ALREADY INSTALLED"
+        echo "CHEF DK IS ALREADY INSTALLED"
     fi
 }
 
@@ -34,6 +33,6 @@ if [ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]; then
     apt-get -y install git
     chefdk_install_ubuntu_16
 else
-    yum install -y git
+    sudo yum install -y git
     chefdk_install_centos_7
 fi
