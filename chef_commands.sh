@@ -6,4 +6,3 @@ cd chef-repo; git pull origin wp-app
 NODE="$(sudo knife node list -z 2>&1 | tail -1)"
 sudo knife node run_list add $NODE wp-app::default -z
 sudo chef-client -z
-
