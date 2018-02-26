@@ -24,15 +24,22 @@ jobs:
             chmod 755 .circleci/circleci_init.sh
             ./.circleci/circleci_init.sh
       - run:
-          name: Terraform and Chef Deployment
+          name: Terraform Deployment
           command: |
             terraform init
             terraform apply -auto-approve
             terraform output rds_endpoint > rds_endpoint.txt
-            EC2_HOST="$(terraform output ec2_endpoint)"
+            export EC2_HOST="$(terraform output ec2_endpoint)"
             echo "EC2 host - $EC2_HOST"
+      - run:
+          name: Chef Deployment
+          command: |      
             echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
             while ! scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~; do echo "SSH failed, retrying..." && sleep 5; done;
             ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'chmod 755 chef_commands.sh && ./chef_commands.sh'
+      - run:
+          name: Chef if WP application is available
+          command: |
+            until $(curl -sSf http://$EC2_HOST > /dev/null); do sleep 5; done
 
 # scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~
