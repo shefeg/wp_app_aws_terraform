@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: ubuntu:latest
     environment:
-      - USER: "ubuntu"
+      - USER: "ec2-user"
     steps:
       - checkout
       - run:
