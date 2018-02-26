@@ -43,6 +43,6 @@ jobs:
           name: Check if WP application is available
           command: |
             EC2_HOST="$(cat ec2_endpoint.txt)"
-            until $(curl -sSf http://$EC2_HOST > /dev/null); do sleep 5; done
+            until $(curl -sS http://$EC2_HOST > /dev/null); do sleep 5; done
 
 # scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~
