@@ -38,7 +38,7 @@ jobs:
             while ! scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~; do echo "SSH failed, retrying..." && sleep 5; done;
             ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST 'chmod 755 chef_commands.sh && ./chef_commands.sh'
       - run:
-          name: Chef if WP application is available
+          name: Check if WP application is available
           command: |
             until $(curl -sSf http://$EC2_HOST > /dev/null); do sleep 5; done
 
