@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 chefdk_install_ubuntu_16 ()
 {
