@@ -27,7 +27,7 @@ chefdk_install_centos_7 ()
     fi
 }
 
-if [ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]; then
+if [[ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]]; then
     apt-get update
     apt-get -y install wget
     apt-get -y install git
