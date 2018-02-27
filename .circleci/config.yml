@@ -32,19 +32,20 @@ jobs:
             terraform apply -auto-approve
             terraform output rds_endpoint > rds_endpoint.txt
             terraform output ec2_endpoint > ec2_endpoint.txt
-            EC2_HOST="$(cat ec2_endpoint.txt)"
-            echo "EC2 host - $EC2_HOST"
+            echo export EC2_HOST="$(cat ec2_endpoint.txt)" >> "$BASH_ENV"
       - run:
           name: Chef Deployment
           command: |      
-            EC2_HOST="$(cat ec2_endpoint.txt)"
-            echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
-            while ! scp -o StrictHostKeyChecking=no rds_endpoint.txt ec2_endpoint.txt chef_commands.sh $USER@$EC2_HOST:/tmp; do echo "SSH failed, retrying..."; sleep 5; done;
-            ssh -o StrictHostKeyChecking=no $USER@$EC2_HOST 'cd /tmp; chmod 755 chef_commands.sh && ./chef_commands.sh'
+            echo $EC2_HOST
+            # EC2_HOST="$(cat ec2_endpoint.txt)"
+            # echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
+            # while ! scp -o StrictHostKeyChecking=no *endpoint.txt chef_commands.sh $USER@$EC2_HOST:/tmp; do echo "SSH failed, retrying..."; sleep 5; done;
+            # ssh -o StrictHostKeyChecking=no $USER@$EC2_HOST 'cd /tmp; chmod 755 chef_commands.sh && ./chef_commands.sh'
       - run:
           name: Check if WP application is available
           command: |
-            EC2_HOST="$(cat ec2_endpoint.txt)"
-            until $(curl -sS http://$EC2_HOST > /dev/null); do sleep 5; done
+            echo $EC2_HOST
+            # EC2_HOST="$(cat ec2_endpoint.txt)"
+            # until $(curl -sS http://$EC2_HOST > /dev/null); do sleep 5; done
 
 # scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~
