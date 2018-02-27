@@ -3,7 +3,7 @@
 # DESCRIPTION:
 # Script to run manually to create AWS user and add policies for Terraform
 
-USER="terraform"
+USER=${1:-'terraform'}
 
 aws iam create-user --user-name $USER
 aws iam create-access-key --user-name $USER
