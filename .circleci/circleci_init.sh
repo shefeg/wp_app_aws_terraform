@@ -15,4 +15,4 @@ aws s3api put-bucket-versioning --bucket $BUCKET --versioning-configuration Stat
          --table-name terraform_locks \
          --attribute-definitions AttributeName=LockID,AttributeType=S \
          --key-schema AttributeName=LockID,KeyType=HASH \
-         --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 2>&1)" = *"ResourceInUseException"* ]] || false
+         --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 2>&1)" = *"ResourceInUseException"* ]] && true
