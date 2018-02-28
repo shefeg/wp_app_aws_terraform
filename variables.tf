@@ -21,7 +21,7 @@ variable "public_subnet_cidr_2" {
 }
 
 variable "ami" {
-  default = "ami-66506c1c"
+  default = "ami-26ebbc5c"
 }
 
 variable "ec2_instance_name" {
