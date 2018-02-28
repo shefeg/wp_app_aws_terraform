@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+sudo yum install -y install git
 cd ~
 git clone -b wp-app-refactored --single-branch https://github.com/shefeg/chef-repo.git && cd ~/chef-repo || \
 cd ~/chef-repo && git pull origin wp-app-refactored

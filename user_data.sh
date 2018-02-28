@@ -34,6 +34,6 @@ if [[ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]]; then
     chefdk_install_ubuntu_16
 else
     sudo yum update -y
-    sudo yum install -y git
+    # for some reason terraform can't install git via user data, so move git installation to chef_commands.sh
     chefdk_install_centos_7
 fi
