@@ -7,9 +7,9 @@ jobs:
       - image: ubuntu:latest
     environment:
       - USER: "ec2-user"
-      - REGION: "$REGION"
-      - BUCKET: "$BUCKET"
-      - CHEF_KEY: "$CHEF_KEY"
+      # - REGION: "$REGION"
+      # - BUCKET: "$BUCKET"
+      # - CHEF_KEY: "$CHEF_KEY"
     steps:
       - checkout
       - run:
