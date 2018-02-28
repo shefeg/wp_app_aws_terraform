@@ -8,7 +8,8 @@
 
 set -e
 BUCKET="terraform-remote-state-storage-s3-oihn"
-aws s3api create-bucket --bucket $BUCKET --region $REGION
+aws s3api create-bucket --bucket $BUCKET --region $REGION && \
+aws s3api put-bucket-versioning --bucket $BUCKET --versioning-configuration Status=Enabled
 [[ "$(aws dynamodb create-table \
          --region $REGION \
          --table-name terraform_locks \

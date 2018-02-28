@@ -21,7 +21,6 @@ jobs:
       - run:
           name: Set Terraform S3 remote state
           command: |
-            export EC2_NAME=$(sed -n 's/ec2_instance_name.*\(".*"\)/\1/p' terraform.tfvars | tr -d '"')
             export REGION=$(sed -n 's/region.*\(".*"\)/\1/p' terraform.tfvars | tr -d '"')
             chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
       - run:
@@ -32,6 +31,10 @@ jobs:
             terraform output rds_endpoint > rds_endpoint.txt
             terraform output ec2_endpoint > ec2_endpoint.txt
             echo export EC2_HOST="$(cat ec2_endpoint.txt)" >> "$BASH_ENV"
+      # Copy artifact (terraform state) from S3 and make it available in circleci
+      - store_artifacts:
+          path: /code/test-results
+          destination: prefix
       - run:
           name: Chef Deployment
           command: |      
