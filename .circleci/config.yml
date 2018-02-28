@@ -7,6 +7,9 @@ jobs:
       - image: ubuntu:latest
     environment:
       - USER: "ec2-user"
+      - REGION: "$REGION"
+      - BUCKET: "$BUCKET"
+      - CHEF_KEY: "$CHEF_KEY"
     steps:
       - checkout
       - run:
@@ -21,29 +24,41 @@ jobs:
       - run:
           name: Set Terraform S3 remote state
           command: |
-            export REGION=$(sed -n 's/region.*\(".*"\)/\1/p' terraform.tfvars | tr -d '"')
             chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
       - run:
           name: Terraform Deployment
           command: |
             terraform init
             terraform apply -auto-approve
+      - run:
+          name: Define ENV variables after Terraform run
+          command: |
             terraform output rds_endpoint > rds_endpoint.txt
             terraform output ec2_endpoint > ec2_endpoint.txt
             echo export EC2_HOST="$(cat ec2_endpoint.txt)" >> "$BASH_ENV"
+            echo export EC2_ID="$(terraform output ec2_id)" >> "$BASH_ENV"
+            echo "$CHEF_KEY" > key
       # Copy artifact (terraform state) from S3 and make it available in circleci
+      - run:
+          name: Creating Terraform Artifact
+          command: |
+            mkdir /tmp/artifacts
+            aws s3 cp s3://$BUCKET/terraform.tfstate /tmp/artifacts/terraform.tfstate
       - store_artifacts:
-          path: /code/test-results
-          destination: prefix
+          path: /tmp/artifacts
+          destination: terraform.tfstate
       - run:
           name: Chef Deployment
           command: |      
-            echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
-            while ! scp -o StrictHostKeyChecking=no *endpoint.txt chef_commands.sh $USER@$EC2_HOST:/tmp; do echo "SSH failed, retrying..."; sleep 5; done;
+            # echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
+            while [[ "$(aws ec2 describe-instance-status --instance-ids $EC2_ID --query 'InstanceStatuses[*].[InstanceStatus]')" != *"passed"* ]]; do \
+            echo "Wait for Reachability Check to pass..."; sleep 10; done
+            
+            RETRIES=0
+            while [ ! scp -o StrictHostKeyChecking=no *endpoint.txt key chef_commands.sh $USER@$EC2_HOST:/tmp ] && [ "$RETRIES" -le 7 ]; do \
+            echo "SSH failed, retrying..."; RETRIES=$((RETRIES+1)); sleep 10; done
             ssh -o StrictHostKeyChecking=no $USER@$EC2_HOST 'cd /tmp; chmod 755 chef_commands.sh && ./chef_commands.sh'
       - run:
           name: Check if WP application is available
           command: |
             until $(curl -sS http://$EC2_HOST > /dev/null); do sleep 5; done
-
-# scp -o StrictHostKeyChecking=no rds_endpoint.txt chef_commands.sh ubuntu@$EC2_HOST:~
