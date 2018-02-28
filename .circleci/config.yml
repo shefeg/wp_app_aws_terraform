@@ -51,7 +51,7 @@ jobs:
           name: Chef Deployment
           command: |      
             # echo "Wait for 2 minutes until Chef is configured on the instance" && sleep 120
-            while [[ "$(aws ec2 describe-instance-status --instance-ids $EC2_ID --query 'InstanceStatuses[*].[InstanceStatus]')" != *"passed"* ]]; do \
+            while ! [[ "$(aws ec2 describe-instance-status --instance-ids $EC2_ID --query 'InstanceStatuses[*].[InstanceStatus]')" = *"passed"* ]]; do \
             echo "Wait for Reachability Check to pass..."; sleep 10; done
             
             RETRIES=0
