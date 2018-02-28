@@ -34,7 +34,7 @@ jobs:
             terraform output ec2_endpoint > ec2_endpoint.txt
             echo export EC2_HOST="$(cat ec2_endpoint.txt)" >> "$BASH_ENV"
             echo export EC2_ID="$(terraform output ec2_id)" >> "$BASH_ENV"
-            echo "$CHEF_KEY" > key
+            echo "$CHEF_KEY" | tee key
             echo "RDS_ENDPOINT - $(terraform output rds_endpoint)"
             echo "EC2_ENDPOINT - $(terraform output ec2_endpoint)"
             echo "EC2_ID - $(terraform output ec2_id)"
