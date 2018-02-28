@@ -33,6 +33,10 @@ if [[ "$(. /etc/os-release; echo $NAME)" = "Ubuntu" ]]; then
     apt-get -y install git
     chefdk_install_ubuntu_16
 else
-    sudo yum install -y git
+    #cloud-config
+    repo_update: true
+    repo_upgrade: all
+    packages:
+     - git
     chefdk_install_centos_7
 fi
