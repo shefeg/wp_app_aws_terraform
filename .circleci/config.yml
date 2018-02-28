@@ -1,5 +1,9 @@
 version: 2
 
+# CircleCI environment variables:
+# 1. CHEF_KEY - key for descrypting Chef data bag with mysql db credentials
+# 2. BUCKET - S3 bucket to be created for keeping Terraform state
+# 3. REGION - used along with BUCKET
 
 jobs:
   build:
