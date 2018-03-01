@@ -60,7 +60,7 @@ jobs:
             echo "Wait for Reachability Check to pass..."; sleep 10; done
             RETRIES=0
             while ! scp -o StrictHostKeyChecking=no *endpoint.txt key chef_commands.sh $USER@$EC2_HOST:/tmp && [ $RETRIES -le 7 ]; do \
-            echo "SSH failed, retrying..."; RETRIES=$(( RETRIES+1 )); sleep 10; done
+            $(( RETRIES+1 )); echo "SSH failed, retrying... $(( 7-RETRIES )) tries left"; sleep 10; done
             ssh -o StrictHostKeyChecking=no $USER@$EC2_HOST 'cd /tmp; chmod 755 chef_commands.sh && ./chef_commands.sh'
       - run:
           name: Check if WP application is available
