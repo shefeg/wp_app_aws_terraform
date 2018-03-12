@@ -1,24 +1,3 @@
-pipeline {
-    agent { dockerfile true }
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout(
-                    [$class: 'GitSCM',
-                    branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/shefeg/wp_app_aws_terraform.git']]]
-                )
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'terraform --version'
-            }
-        }
-    }
-}
-
 node {
     stage ('Container preparation') {
         checkout(
@@ -37,18 +16,43 @@ node {
                 sh 'terraform --version'
             }
             
-            stage ('Set Terraform S3 remote state') {
-                sh 'chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh'
-            }
-            
             stage ('Terraform Deployment') {
-                sh 'terraform init && terraform apply -auto-approve'
-                sh 'terraform output rds_endpoint > rds_endpoint.txt'
-                sh 'terraform output ec2_endpoint > ec2_endpoint.txt'
-                sh 'export EC2_HOST=`cat ec2_endpoint.txt`'
-                sh 'export EC2_ID=`terraform output ec2_id`'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
+                accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh """
+                        chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
+                        terraform init && terraform apply -auto-approve
+                        terraform output rds_endpoint > rds_endpoint.txt
+                        terraform output ec2_endpoint > ec2_endpoint.txt
+                        aws s3 cp s3://${BUCKET}/terraform.tfstate target/terraform.tfstate
+                    """
+                    env.EC2_HOST=sh(returnStdout: true, script: 'cat ec2_endpoint.txt').trim()
+                    env.EC2_ID=sh(returnStdout: true, script: 'terraform output ec2_id').trim()
+                }
+                archive 'target/*.tfstate'
             }
-            
+                
+            stage ('Chef Deployment') {
+                withCredentials([string(credentialsId: 'chef_key', variable: 'KEY')]) {
+                    sh "echo ${KEY} > key"
+                }
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
+                accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh """#!/bin/bash
+                        while ! [[ `aws ec2 describe-instance-status --instance-ids ${EC2_ID} --query 'InstanceStatuses[*].[InstanceStatus]' --region ${REGION}` = *"passed"* ]]; do \
+                        echo \"Wait for Reachability Check to pass...\"; sleep 10; done
+                    """
+                    timeout(time: 60, unit: 'SECONDS') {
+                        sshagent(['ec2_user_key']) {
+                            sh """
+                                while ! scp -o StrictHostKeyChecking=no *endpoint.txt key chef_commands.sh ${USER}@${EC2_HOST}:/tmp; do \
+                                echo \"SSH failed, retrying... \"; sleep 10; done
+                                ssh -o StrictHostKeyChecking=no ${USER}@${EC2_HOST} 'cd /tmp; chmod 755 chef_commands.sh && ./chef_commands.sh'
+                            """
+                        }
+                    }
+                }
+            }
         }
     }
 }
