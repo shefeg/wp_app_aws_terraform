@@ -53,6 +53,11 @@ node {
                     }
                 }
             }
+            stage ('Verify if WP app is available') {
+                timeout(time: 60, unit: 'SECONDS') {
+                    sh "until $(curl -sS http://${EC2_HOST} > /dev/null); do sleep 5; done"
+                }
+            }
         }
     }
 }
