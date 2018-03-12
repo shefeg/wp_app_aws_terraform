@@ -1,4 +1,4 @@
-FROM jenkinsci/slave:latest
+FROM ubuntu:16.04
 
 USER root
 
