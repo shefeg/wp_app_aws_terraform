@@ -24,7 +24,7 @@ node {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh "terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE}"
-                    input message: 'Do you really want to destroy?', parameters: [choice(choices: 'no\nyes', description: 'What is the answer?', name: 'ANSWER')]
+                    env.ANSWER = input message: 'Do you really want to destroy?', parameters: [choice(choices: 'no\nyes', description: 'What is the answer?', name: 'ANSWER')]
                     sh """
                         if [ "${env.ANSWER}" == 'yes' ]; then
                             terraform destroy -force
