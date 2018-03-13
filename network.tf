@@ -6,7 +6,7 @@ resource "aws_vpc" "wp_vpc" {
   enable_dns_support   = true
 
   tags {
-    Name = "wp_vpc"
+    Name = "wp_vpc-${terraform.workspace}"
   }
 }
 
@@ -18,7 +18,7 @@ resource "aws_subnet" "wp_public_subnet_1" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "wp_public_subnet_1"
+    Name = "wp_public_subnet_1-${terraform.workspace}"
   }
 }
 
@@ -29,16 +29,16 @@ resource "aws_subnet" "wp_public_subnet_2" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "wp_public_subnet_2"
+    Name = "wp_public_subnet_2-${terraform.workspace}"
   }
 }
 
 resource "aws_db_subnet_group" "db_wp_subnet_group" {
-  name       = "db_wp_subnet_group"
+  name       = "db_wp_subnet_group-${terraform.workspace}"
   subnet_ids = ["${aws_subnet.wp_public_subnet_1.id}", "${aws_subnet.wp_public_subnet_2.id}"]
 
   tags {
-    Name = "db_wp_subnet_group"
+    Name = "db_wp_subnet_group-${terraform.workspace}"
   }
 }
 
@@ -47,7 +47,7 @@ resource "aws_internet_gateway" "wp_igw" {
   vpc_id = "${aws_vpc.wp_vpc.id}"
 
   tags {
-    Name = "wp_igw"
+    Name = "wp_igw-${terraform.workspace}"
   }
 }
 
@@ -61,7 +61,7 @@ resource "aws_route_table" "wp_public_route_1" {
   }
 
   tags {
-    Name = "wp_public_route_1"
+    Name = "wp_public_route_1-${terraform.workspace}"
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_route_table" "wp_public_route_2" {
   }
 
   tags {
-    Name = "wp_public_route_2"
+    Name = "wp_public_route_2-${terraform.workspace}"
   }
 }
 
@@ -90,12 +90,12 @@ resource "aws_route_table_association" "rt_a_2" {
 
 #-- security groups --
 resource "aws_security_group" "rds_instance" {
-  name   = "rds_instance"
+  name   = "rds_instance-${terraform.workspace}"
   vpc_id = "${aws_vpc.wp_vpc.id}"
 }
 
 resource "aws_security_group" "wp_instance" {
-  name   = "wp_instance"
+  name   = "wp_instance-${terraform.workspace}"
   vpc_id = "${aws_vpc.wp_vpc.id}"
 }
 

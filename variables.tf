@@ -24,6 +24,10 @@ variable "ami" {
   default = "ami-26ebbc5c"
 }
 
+variable "ssh_key" {
+  default = "aipk"
+}
+
 variable "ec2_instance_name" {
   default = "wp-app"
 }

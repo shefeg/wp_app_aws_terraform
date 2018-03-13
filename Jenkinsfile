@@ -1,4 +1,7 @@
-node ('agent') {
+node {
+    parameters {
+        choice(choices: 'dev\nprod', description: 'What Wokspace?', name: 'WORKSPACE')
+    }
     stage ('Container preparation') {
         checkout(
                 [$class: 'GitSCM',
@@ -21,10 +24,11 @@ node ('agent') {
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
                         chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
-                        terraform init && terraform apply -auto-approve
+                        terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE}
+                        terraform apply -auto-approve
                         terraform output rds_endpoint > rds_endpoint.txt
                         terraform output ec2_endpoint > ec2_endpoint.txt
-                        aws s3 cp s3://${BUCKET}/terraform.tfstate target/terraform.tfstate
+                        aws s3 cp s3://${BUCKET}/env:/${params.WORKSPACE}/terraform.tfstate target/${params.WORKSPACE}-terraform.tfstate
                     """
                     env.EC2_HOST=sh(returnStdout: true, script: 'cat ec2_endpoint.txt').trim()
                     env.EC2_ID=sh(returnStdout: true, script: 'terraform output ec2_id').trim()
