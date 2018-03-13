@@ -1,6 +1,6 @@
 node {
     parameters {
-        choice(choices: 'default\ndev\nprod', description: 'What Wokspace?', name: 'WORKSPACE')
+        choice(choices: 'dev\nprod', description: 'What Wokspace?', name: 'WORKSPACE')
     }
     stage ('Container preparation') {
         checkout(
