@@ -1,4 +1,4 @@
-node ('slave') {
+node ('agent') {
     stage ('Container preparation') {
         checkout(
                 [$class: 'GitSCM',
