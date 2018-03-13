@@ -26,7 +26,7 @@ node {
                     sh "terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE}"
                     input message: 'Do you really want to destroy?', parameters: [choice(choices: 'no\nyes', description: 'What is the answer?', name: 'ANSWER')]
                     sh """
-                        if [ "${params.ANSWER}" == 'yes' ]; then
+                        if [ "${env.ANSWER}" == 'yes' ]; then
                             terraform destroy -force
                             aws s3 cp s3://${BUCKET}/env:/${params.WORKSPACE}/terraform.tfstate target/${params.WORKSPACE}-terraform.tfstate
                         else
