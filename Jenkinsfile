@@ -15,17 +15,22 @@ node {
             stage ('Checkout') {
                 git url: 'https://github.com/shefeg/wp_app_aws_terraform.git'
             }
-        
+
             stage ('Test Terraform') {
-                sh 'terraform --version && terraform validate && terraform plan'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
+                accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh """
+                    chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
+                    terraform --version && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
+                    && terraform validate && terraform plan
+                    """
+                }
             }
             
             stage ('Terraform Deployment') {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
-                        chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
-                        terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE}
                         terraform apply -auto-approve
                         terraform output rds_endpoint > rds_endpoint.txt
                         terraform output ec2_endpoint > ec2_endpoint.txt

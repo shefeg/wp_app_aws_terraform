@@ -21,7 +21,7 @@ node {
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
                     terraform --version && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
-                    && terraform validate && terraform plan
+                    && terraform validate
                     """
                 }
             }
