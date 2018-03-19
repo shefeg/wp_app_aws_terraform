@@ -52,7 +52,7 @@ node {
                         while ! [[ `aws ec2 describe-instance-status --instance-ids ${EC2_ID} --query 'InstanceStatuses[*].[InstanceStatus]' --region ${REGION}` = *"passed"* ]]; do \
                         echo \"Wait for Reachability Check to pass...\"; sleep 10; done
                     """
-                    timeout(time: 60, unit: 'SECONDS') {
+                    timeout(time: 400, unit: 'SECONDS') {
                         sshagent(['ec2_user_key']) {
                             sh """
                                 while ! scp -o StrictHostKeyChecking=no *endpoint.txt key chef_commands.sh ${USER}@${EC2_HOST}:/tmp; do \
