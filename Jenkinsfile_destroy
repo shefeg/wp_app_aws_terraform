@@ -19,8 +19,10 @@ node {
             stage ('Test Terraform') {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                    sh 'terraform --version && terraform init && sh "terraform workspace new ${params.WORKSPACE} \
-                    && terraform validate && terraform plan'
+                    sh """
+                    terraform --version && terraform init && terraform workspace new ${params.WORKSPACE} \
+                    && terraform validate && terraform plan
+                    """
                 }
             }
             stage ('Terraform Destroy') {
