@@ -9,7 +9,8 @@ node {
                 extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [],
                 userRemoteConfigs: [[url: 'https://github.com/shefeg/wp_app_aws_terraform.git']]]
                 )
-        def container = docker.build('container')
+        // def container = docker.build('container')
+        def container = docker.build('container', '-f Dockerfile_data .')
         container.inside {
             stage ('Checkout') {
                 git url: 'https://github.com/shefeg/wp_app_aws_terraform.git'
