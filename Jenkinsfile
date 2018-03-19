@@ -17,7 +17,7 @@ node {
             }
         
             stage ('Test Terraform') {
-                sh 'terraform --version'
+                sh 'terraform --version && terraform validate && terraform plan'
             }
             
             stage ('Terraform Deployment') {
