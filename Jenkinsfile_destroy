@@ -27,8 +27,9 @@ node {
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
                     mkdir -p target/test-report
-                    terraform --version >> target/test-report/test.xml && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
-                    && terraform validate >> target/test-report/test.xml
+                    terraform --version >> target/test-report/test.txt && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
+                    && terraform validate >> target/test-report/test.txt
+                    echo -e "<stdout>\n$(cat target/test-report/test.txt)\n</stdout>" > target/test-report/test.xml
                     """
                 }
                 junit 'target/test-report/*.xml'
