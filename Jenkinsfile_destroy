@@ -27,11 +27,11 @@ node {
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
                     mkdir -p target/test-report
-                    terraform --version >> target/test-report/test.txt && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
-                    && terraform validate >> target/test-report/test.txt
+                    terraform --version >> target/test-report/test.xml && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
+                    && terraform validate >> target/test-report/test.xml
                     """
                 }
-                junit 'target/test-report/*.txt'
+                junit 'target/test-report/*.xml'
             }
             stage ('Terraform Destroy') {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
@@ -42,10 +42,5 @@ node {
                 archive 'target/*.tfstate'
             }
         }
-    }
-
-    always {
-        archive 'target/*.tfstate'
-        junit 'target/*.txt'
     }
 }
