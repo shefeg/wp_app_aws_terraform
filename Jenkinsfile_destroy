@@ -13,10 +13,11 @@ node {
         def container = docker.build('container', '-f Dockerfile_data .')
         container.inside {
             stage ('Checkout') {
-                [$class: 'GitSCM',
-                branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
-                extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [],
-                userRemoteConfigs: [[credentialsId: 'bitbucket_key', url: 'git@github.com:shefeg/wp_app_aws_terraform.git']]]
+                checkout(
+                    [$class: 'GitSCM',
+                    branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [],
+                    userRemoteConfigs: [[credentialsId: 'bitbucket_key', url: 'git@github.com:shefeg/wp_app_aws_terraform.git']]]
                 )
             }
         
