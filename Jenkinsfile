@@ -26,16 +26,13 @@ node {
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
                     chmod 755 .circleci/circleci_init.sh && ./.circleci/circleci_init.sh
-                    mkdir -p target/test-report
-                    terraform --version >> target/test-report/test.txt && \
+                    terraform --version && \
                     terraform init && \
                     terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} && \
-                    terraform validate >> target/test-report/test.txt && \
+                    terraform validate && \
                     terraform plan
-                    echo "<stdout>\$(cat target/test-report/test.txt)</stdout>" > target/test-report/test.xml
                     """
                 }
-                junit 'target/test-report/*.xml'
             }
             
             stage ('Terraform Deployment') {
