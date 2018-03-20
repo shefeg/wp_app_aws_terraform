@@ -2,6 +2,7 @@ node {
     parameters {
         choice(choices: 'dev\nprod', description: 'What Wokspace?', name: 'WORKSPACE')
     }
+
     stage ('Container preparation') {
         checkout(
                 [$class: 'GitSCM',
@@ -25,8 +26,8 @@ node {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
-                    terraform --version && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
-                    && terraform validate
+                    terraform --version >> target/test-reports/test.txt && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
+                    && terraform validate >> target/test-reports/test.txt
                     """
                 }
             }
@@ -34,9 +35,17 @@ node {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     env.ANSWER = input message: 'Do you really want to destroy?'
-                    sh 'terraform destroy -force'
+                    sh "terraform destroy -force && aws s3 cp s3://${BUCKET}/env:/${params.WORKSPACE}/terraform.tfstate target/${params.WORKSPACE}-terraform.tfstate"
+                    
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            archive 'target/*.tfstate'
+            junit 'target/test-reports/*.txt'
         }
     }
 }
