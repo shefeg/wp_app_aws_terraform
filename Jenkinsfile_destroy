@@ -42,10 +42,8 @@ node {
         }
     }
 
-    post {
-        always {
-            archive 'target/*.tfstate'
-            junit 'target/*.txt'
-        }
+    always {
+        archive 'target/*.tfstate'
+        junit 'target/*.txt'
     }
 }
