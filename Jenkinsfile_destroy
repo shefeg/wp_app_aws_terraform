@@ -26,8 +26,8 @@ node {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
                 accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
                     sh """
-                    terraform --version >> target/test-reports/test.txt && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
-                    && terraform validate >> target/test-reports/test.txt
+                    terraform --version >> target/test.txt && terraform init && terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} \
+                    && terraform validate >> target/test.txt
                     """
                 }
             }
@@ -45,7 +45,7 @@ node {
     post {
         always {
             archive 'target/*.tfstate'
-            junit 'target/test-reports/*.txt'
+            junit 'target/*.txt'
         }
     }
 }
