@@ -16,7 +16,7 @@ node {
                 [$class: 'GitSCM',
                 branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
                 extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [],
-                userRemoteConfigs: [[credentialsId: 'bitbucket_key', url: 'git@bitbucket.org:shefeg/wp_app_aws_terraform.git']]]
+                userRemoteConfigs: [[credentialsId: 'bitbucket_key', url: 'git@github.com:shefeg/wp_app_aws_terraform.git']]]
                 )
             }
 
