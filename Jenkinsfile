@@ -13,7 +13,11 @@ node {
         def container = docker.build('container', '-f Dockerfile_data .')
         container.inside {
             stage ('Checkout') {
-                git url: 'https://github.com/shefeg/wp_app_aws_terraform.git'
+                [$class: 'GitSCM',
+                branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false,
+                extensions: [[$class: 'CleanBeforeCheckout']], submoduleCfg: [],
+                userRemoteConfigs: [[credentialsId: 'bitbucket_key', url: 'git@bitbucket.org:shefeg/wp_app_aws_terraform.git']]]
+                )
             }
 
             stage ('Test Terraform') {
