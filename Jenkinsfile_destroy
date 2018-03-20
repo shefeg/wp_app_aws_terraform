@@ -31,7 +31,9 @@ node {
                     && terraform validate >> target/test-report/test.xml
                     """
                 }
-                junit 'target/test-report/*.xml'
+                if (result.equals("SUCCESS")) {
+                    junit 'target/test-report/*.xml'
+                }
             }
             stage ('Terraform Destroy') {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws_credentials',
@@ -39,7 +41,9 @@ node {
                     env.ANSWER = input message: 'Do you really want to destroy?'
                     sh "terraform destroy -force && aws s3 cp s3://${BUCKET}/env:/${params.WORKSPACE}/terraform.tfstate target/${params.WORKSPACE}-terraform.tfstate"
                 }
-                archive 'target/*.tfstate'
+                if (result.equals("SUCCESS")) {
+                    archive 'target/*.tfstate'
+                }
             }
         }
     }
