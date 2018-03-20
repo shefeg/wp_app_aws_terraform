@@ -31,7 +31,7 @@ node {
                     terraform init && \
                     terraform workspace new ${params.WORKSPACE} || terraform workspace select ${params.WORKSPACE} && \
                     terraform validate >> target/test-report/test.txt
-                    echo "<stdout>$(cat target/test-report/test.txt)</stdout>" > target/test-report/test.xml
+                    echo "<stdout>\$(cat target/test-report/test.txt)</stdout>" > target/test-report/test.xml
                     """
                 }
                 junit 'target/test-report/*.xml'
