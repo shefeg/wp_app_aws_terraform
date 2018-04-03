@@ -8,22 +8,22 @@ locals {
   env="${terraform.workspace}"
 
   counts = {
-    "dev"=1
-    "prod"=1
+    "dev"  = 1
+    "prod" = 1
   }
 
   aws_instances = {
-    "dev"="t2.micro"
-    "prod"="t2.micro"
+    "dev"  = "t2.micro"
+    "prod" = "t2.micro"
   }
 
   rds_instances = {
-    "dev"="db.t2.micro"
-    "prod"="db.t2.micro"
+    "dev"  = "db.t2.micro"
+    "prod" = "db.t2.micro"
   }
 
-  instance_type="${lookup(local.aws_instances,local.env)}"
-  instance_class="${lookup(local.rds_instances,local.env)}"
+  instance_type  = "${lookup(local.aws_instances,local.env)}"
+  instance_class = "${lookup(local.rds_instances,local.env)}"
 }
 
 #------ EC2 ------
